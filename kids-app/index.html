@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#ffd166" />
+  <title>Mon Petit Génie 🌟</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Écran d'accueil -->
+  <header id="topbar" class="hidden">
+    <button id="homeBtn" class="icon-btn" aria-label="Retour à l'accueil">🏠</button>
+    <h1 id="screenTitle">Mon Petit Génie</h1>
+    <button id="soundBtn" class="icon-btn" aria-label="Activer ou couper le son">🔊</button>
+  </header>
+
+  <main id="app">
+    <!-- MENU -->
+    <section id="menu" class="screen active">
+      <h1 class="logo">Mon Petit&nbsp;Génie <span class="wiggle">🌟</span></h1>
+      <p class="subtitle">Choisis un jeu&nbsp;!</p>
+      <div class="menu-grid">
+        <button class="menu-card" data-game="alphabet" style="--c1:#ff6b6b;--c2:#ff9e7d">
+          <span class="menu-emoji">🔤</span><span>Alphabet</span>
+        </button>
+        <button class="menu-card" data-game="numbers" style="--c1:#4dabf7;--c2:#74c0fc">
+          <span class="menu-emoji">🔢</span><span>Les Chiffres</span>
+        </button>
+        <button class="menu-card" data-game="memory" style="--c1:#9775fa;--c2:#b197fc">
+          <span class="menu-emoji">🧠</span><span>Memory</span>
+        </button>
+        <button class="menu-card" data-game="findletter" style="--c1:#51cf66;--c2:#8ce99a">
+          <span class="menu-emoji">🔎</span><span>Trouve la lettre</span>
+        </button>
+        <button class="menu-card" data-game="findnumber" style="--c1:#ffa94d;--c2:#ffc078">
+          <span class="menu-emoji">🎯</span><span>Trouve le chiffre</span>
+        </button>
+        <button class="menu-card" data-game="colors" style="--c1:#f783ac;--c2:#faa2c1">
+          <span class="menu-emoji">🎨</span><span>Les Couleurs</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ALPHABET -->
+    <section id="alphabet" class="screen">
+      <div class="flashcard" id="alphaCard">
+        <div class="big-letter" id="alphaLetter">A</div>
+        <div class="card-emoji" id="alphaEmoji">🍎</div>
+        <div class="card-word" id="alphaWord">Avion</div>
+      </div>
+      <div class="nav-row">
+        <button class="round-btn" id="alphaPrev" aria-label="Précédent">⬅️</button>
+        <button class="round-btn big" id="alphaSay" aria-label="Écouter">🔊</button>
+        <button class="round-btn" id="alphaNext" aria-label="Suivant">➡️</button>
+      </div>
+    </section>
+
+    <!-- NUMBERS -->
+    <section id="numbers" class="screen">
+      <div class="flashcard" id="numCard">
+        <div class="big-letter" id="numDigit">1</div>
+        <div class="dots" id="numDots"></div>
+        <div class="card-word" id="numWord">Un</div>
+      </div>
+      <div class="nav-row">
+        <button class="round-btn" id="numPrev" aria-label="Précédent">⬅️</button>
+        <button class="round-btn big" id="numSay" aria-label="Écouter">🔊</button>
+        <button class="round-btn" id="numNext" aria-label="Suivant">➡️</button>
+      </div>
+    </section>
+
+    <!-- MEMORY -->
+    <section id="memory" class="screen">
+      <p class="instruction" id="memoryHint">Trouve les paires&nbsp;!</p>
+      <div class="memory-grid" id="memoryGrid"></div>
+    </section>
+
+    <!-- FIND LETTER -->
+    <section id="findletter" class="screen quiz">
+      <p class="instruction">Où est la lettre&hellip;</p>
+      <div class="quiz-target" id="findLetterTarget">A</div>
+      <button class="round-btn" id="findLetterSay" aria-label="Réécouter">🔊</button>
+      <div class="quiz-options" id="findLetterOptions"></div>
+    </section>
+
+    <!-- FIND NUMBER -->
+    <section id="findnumber" class="screen quiz">
+      <p class="instruction">Où est le chiffre&hellip;</p>
+      <div class="quiz-target" id="findNumberTarget">1</div>
+      <button class="round-btn" id="findNumberSay" aria-label="Réécouter">🔊</button>
+      <div class="quiz-options" id="findNumberOptions"></div>
+    </section>
+
+    <!-- COLORS -->
+    <section id="colors" class="screen quiz">
+      <p class="instruction">Touche la couleur&hellip;</p>
+      <div class="quiz-target color-target" id="colorTarget">Rouge</div>
+      <button class="round-btn" id="colorSay" aria-label="Réécouter">🔊</button>
+      <div class="quiz-options color-options" id="colorOptions"></div>
+    </section>
+  </main>
+
+  <!-- Animation de récompense -->
+  <div id="celebrate" class="celebrate hidden"><div id="celebrateEmoji">🎉</div></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
