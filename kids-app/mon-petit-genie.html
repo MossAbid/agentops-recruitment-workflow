@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#ffd166" />
+  <title>Mon Petit Génie 🌟</title>
+  <style>
+/* ===== Mon Petit Génie — feuille de style ===== */
+:root {
+  --bg1: #fff3bf;
+  --bg2: #ffd8a8;
+  --ink: #3d3d5c;
+  --radius: 28px;
+  font-size: clamp(16px, 2.6vw, 22px);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Comic Sans MS", "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.hidden { display: none !important; }
+
+/* ===== Barre du haut ===== */
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.8rem;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(6px);
+}
+#screenTitle { font-size: 1.1rem; margin: 0; }
+.icon-btn {
+  font-size: 1.8rem;
+  border: none;
+  background: #fff;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.12);
+  cursor: pointer;
+}
+.icon-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.12); }
+
+/* ===== Écrans ===== */
+#app { height: calc(100% - 0px); }
+.screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  height: 100%;
+  padding: 1rem;
+  animation: pop 0.35s ease;
+}
+.screen.active { display: flex; }
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Menu ===== */
+.logo { font-size: clamp(2rem, 8vw, 3.2rem); margin: 0; text-align: center; }
+.subtitle { font-size: 1.3rem; margin: 0 0 0.5rem; }
+.wiggle { display: inline-block; animation: wiggle 1.6s ease-in-out infinite; }
+@keyframes wiggle {
+  0%,100% { transform: rotate(-12deg) scale(1); }
+  50%     { transform: rotate(12deg) scale(1.15); }
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 1rem;
+  width: min(560px, 100%);
+}
+.menu-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.2rem 0.5rem;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, var(--c1), var(--c2));
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.15rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.18);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.menu-card:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+.menu-emoji { font-size: 2.8rem; }
+
+/* ===== Flashcards (alphabet / chiffres) ===== */
+.flashcard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: min(420px, 88vw);
+  aspect-ratio: 3 / 4;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+.big-letter {
+  font-size: clamp(5rem, 26vw, 11rem);
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, #ff6b6b, #f783ac, #4dabf7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.card-emoji { font-size: clamp(3rem, 14vw, 5.5rem); }
+.card-word { font-size: clamp(1.5rem, 7vw, 2.4rem); font-weight: 700; }
+
+.dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  max-width: 90%;
+}
+.dot {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: #4dabf7;
+  animation: dotpop 0.3s ease backwards;
+}
+@keyframes dotpop { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* ===== Navigation ===== */
+.nav-row { display: flex; align-items: center; gap: 1.4rem; }
+.round-btn {
+  font-size: 2rem;
+  border: none;
+  background: #fff;
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+.round-btn.big { width: 5.2rem; height: 5.2rem; font-size: 2.6rem; background: #ffd166; }
+.round-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+
+/* ===== Memory ===== */
+.instruction { font-size: 1.4rem; font-weight: 700; margin: 0; text-align: center; }
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  width: min(480px, 92vw);
+}
+.mem-card {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #9775fa, #b197fc);
+  font-size: clamp(1.8rem, 9vw, 3rem);
+  color: transparent;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.mem-card.flipped { background: #fff; color: initial; transform: rotateY(0); }
+.mem-card.matched { background: #8ce99a; color: initial; animation: matched 0.5s ease; }
+.mem-card:disabled { cursor: default; }
+@keyframes matched { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+/* ===== Quiz (trouve la lettre / chiffre / couleur) ===== */
+.quiz-target {
+  font-size: clamp(4rem, 22vw, 8rem);
+  font-weight: 800;
+  color: #ff6b6b;
+}
+.color-target { font-size: clamp(2rem, 9vw, 3rem); }
+.quiz-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  width: min(480px, 92vw);
+}
+.quiz-options.color-options { grid-template-columns: repeat(2, 1fr); }
+.quiz-btn {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 22px;
+  background: #fff;
+  font-size: clamp(2.4rem, 12vw, 4rem);
+  font-weight: 800;
+  color: var(--ink);
+  box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+.quiz-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+.quiz-btn.wrong { animation: shake 0.4s; }
+.quiz-btn.right { animation: matched 0.5s ease; background: #8ce99a; }
+.color-swatch { border-radius: 22px; aspect-ratio: 1; border: none; box-shadow: 0 5px 0 rgba(0,0,0,0.2); cursor: pointer; }
+.color-swatch:active { transform: translateY(3px); }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+/* ===== Célébration ===== */
+.celebrate {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 50;
+}
+#celebrateEmoji { font-size: 9rem; animation: celebrate 1s ease; }
+@keyframes celebrate {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  40%  { transform: scale(1.3) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 0; }
+}
+
+.confetti {
+  position: fixed;
+  top: -20px;
+  width: 12px;
+  height: 12px;
+  z-index: 49;
+  pointer-events: none;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(540deg); opacity: 0.7; }
+}
+
+</style>
+</head>
+<body>
+  <!-- Écran d'accueil -->
+  <header id="topbar" class="hidden">
+    <button id="homeBtn" class="icon-btn" aria-label="Retour à l'accueil">🏠</button>
+    <h1 id="screenTitle">Mon Petit Génie</h1>
+    <button id="soundBtn" class="icon-btn" aria-label="Activer ou couper le son">🔊</button>
+  </header>
+
+  <main id="app">
+    <!-- MENU -->
+    <section id="menu" class="screen active">
+      <h1 class="logo">Mon Petit&nbsp;Génie <span class="wiggle">🌟</span></h1>
+      <p class="subtitle">Choisis un jeu&nbsp;!</p>
+      <div class="menu-grid">
+        <button class="menu-card" data-game="alphabet" style="--c1:#ff6b6b;--c2:#ff9e7d">
+          <span class="menu-emoji">🔤</span><span>Alphabet</span>
+        </button>
+        <button class="menu-card" data-game="numbers" style="--c1:#4dabf7;--c2:#74c0fc">
+          <span class="menu-emoji">🔢</span><span>Les Chiffres</span>
+        </button>
+        <button class="menu-card" data-game="memory" style="--c1:#9775fa;--c2:#b197fc">
+          <span class="menu-emoji">🧠</span><span>Memory</span>
+        </button>
+        <button class="menu-card" data-game="findletter" style="--c1:#51cf66;--c2:#8ce99a">
+          <span class="menu-emoji">🔎</span><span>Trouve la lettre</span>
+        </button>
+        <button class="menu-card" data-game="findnumber" style="--c1:#ffa94d;--c2:#ffc078">
+          <span class="menu-emoji">🎯</span><span>Trouve le chiffre</span>
+        </button>
+        <button class="menu-card" data-game="colors" style="--c1:#f783ac;--c2:#faa2c1">
+          <span class="menu-emoji">🎨</span><span>Les Couleurs</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ALPHABET -->
+    <section id="alphabet" class="screen">
+      <div class="flashcard" id="alphaCard">
+        <div class="big-letter" id="alphaLetter">A</div>
+        <div class="card-emoji" id="alphaEmoji">🍎</div>
+        <div class="card-word" id="alphaWord">Avion</div>
+      </div>
+      <div class="nav-row">
+        <button class="round-btn" id="alphaPrev" aria-label="Précédent">⬅️</button>
+        <button class="round-btn big" id="alphaSay" aria-label="Écouter">🔊</button>
+        <button class="round-btn" id="alphaNext" aria-label="Suivant">➡️</button>
+      </div>
+    </section>
+
+    <!-- NUMBERS -->
+    <section id="numbers" class="screen">
+      <div class="flashcard" id="numCard">
+        <div class="big-letter" id="numDigit">1</div>
+        <div class="dots" id="numDots"></div>
+        <div class="card-word" id="numWord">Un</div>
+      </div>
+      <div class="nav-row">
+        <button class="round-btn" id="numPrev" aria-label="Précédent">⬅️</button>
+        <button class="round-btn big" id="numSay" aria-label="Écouter">🔊</button>
+        <button class="round-btn" id="numNext" aria-label="Suivant">➡️</button>
+      </div>
+    </section>
+
+    <!-- MEMORY -->
+    <section id="memory" class="screen">
+      <p class="instruction" id="memoryHint">Trouve les paires&nbsp;!</p>
+      <div class="memory-grid" id="memoryGrid"></div>
+    </section>
+
+    <!-- FIND LETTER -->
+    <section id="findletter" class="screen quiz">
+      <p class="instruction">Où est la lettre&hellip;</p>
+      <div class="quiz-target" id="findLetterTarget">A</div>
+      <button class="round-btn" id="findLetterSay" aria-label="Réécouter">🔊</button>
+      <div class="quiz-options" id="findLetterOptions"></div>
+    </section>
+
+    <!-- FIND NUMBER -->
+    <section id="findnumber" class="screen quiz">
+      <p class="instruction">Où est le chiffre&hellip;</p>
+      <div class="quiz-target" id="findNumberTarget">1</div>
+      <button class="round-btn" id="findNumberSay" aria-label="Réécouter">🔊</button>
+      <div class="quiz-options" id="findNumberOptions"></div>
+    </section>
+
+    <!-- COLORS -->
+    <section id="colors" class="screen quiz">
+      <p class="instruction">Touche la couleur&hellip;</p>
+      <div class="quiz-target color-target" id="colorTarget">Rouge</div>
+      <button class="round-btn" id="colorSay" aria-label="Réécouter">🔊</button>
+      <div class="quiz-options color-options" id="colorOptions"></div>
+    </section>
+  </main>
+
+  <!-- Animation de récompense -->
+  <div id="celebrate" class="celebrate hidden"><div id="celebrateEmoji">🎉</div></div>
+
+  <script>
+/* ===== Mon Petit Génie =====
+   Application éducative pour les 3 ans : alphabet, chiffres et jeux cognitifs.
+   100% hors-ligne. La voix utilise l'API Web Speech du navigateur (français).
+*/
+
+"use strict";
+
+/* ---------- Données ---------- */
+
+// Une image (emoji) + un mot français commençant par chaque lettre.
+const ALPHABET = [
+  ["A", "🍎", "Avion"],   ["B", "🎈", "Ballon"],  ["C", "🐱", "Chat"],
+  ["D", "🐬", "Dauphin"], ["E", "⭐", "Étoile"],  ["F", "🌸", "Fleur"],
+  ["G", "🍰", "Gâteau"],  ["H", "🦔", "Hérisson"],["I", "🏝️", "Île"],
+  ["J", "🌻", "Jardin"],  ["K", "🐨", "Koala"],   ["L", "🦁", "Lion"],
+  ["M", "🏠", "Maison"],  ["N", "☁️", "Nuage"],   ["O", "🐻", "Ours"],
+  ["P", "🦋", "Papillon"],["Q", "🐧", "Manchot"], ["R", "🦊", "Renard"],
+  ["S", "🐍", "Serpent"], ["T", "🐢", "Tortue"],  ["U", "🦄", "Licorne"],
+  ["V", "🚗", "Voiture"], ["W", "🚂", "Wagon"],   ["X", "🎼", "Xylophone"],
+  ["Y", "🧘", "Yoga"],    ["Z", "🦓", "Zèbre"],
+];
+
+const NUMBER_WORDS = ["", "Un", "Deux", "Trois", "Quatre", "Cinq",
+                      "Six", "Sept", "Huit", "Neuf", "Dix"];
+
+const COLORS = [
+  ["Rouge", "#ff5252"], ["Bleu", "#4dabf7"], ["Jaune", "#ffd43b"],
+  ["Vert", "#51cf66"],  ["Orange", "#ff922b"], ["Violet", "#9775fa"],
+  ["Rose", "#f783ac"],  ["Marron", "#a0522d"],
+];
+
+const MEMORY_EMOJIS = ["🐶","🐱","🦄","🐸","🐢","🦋","🐠","🌸"];
+
+const PRAISE = ["Bravo !", "Super !", "Génial !", "Tu es un champion !",
+                "Magnifique !", "Bien joué !", "Trop fort !", "Youpi !"];
+const CELEBRATE_EMOJIS = ["🎉","⭐","🌈","🎈","👏","🦄","🌟","🍭"];
+
+/* ---------- Son (synthèse vocale) ---------- */
+
+let soundOn = true;
+let frVoice = null;
+
+function pickVoice() {
+  const voices = speechSynthesis.getVoices();
+  frVoice = voices.find(v => /fr/i.test(v.lang)) || null;
+}
+if ("speechSynthesis" in window) {
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+function say(text) {
+  if (!soundOn || !("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "fr-FR";
+  u.rate = 0.85;   // un peu plus lent pour les tout-petits
+  u.pitch = 1.15;  // voix douce
+  if (frVoice) u.voice = frVoice;
+  speechSynthesis.speak(u);
+}
+
+function praise() {
+  say(PRAISE[Math.floor(Math.random() * PRAISE.length)]);
+}
+
+/* ---------- Navigation entre écrans ---------- */
+
+const screens = document.querySelectorAll(".screen");
+const topbar = document.getElementById("topbar");
+const screenTitle = document.getElementById("screenTitle");
+
+const TITLES = {
+  menu: "Mon Petit Génie",
+  alphabet: "L'Alphabet",
+  numbers: "Les Chiffres",
+  memory: "Memory",
+  findletter: "Trouve la lettre",
+  findnumber: "Trouve le chiffre",
+  colors: "Les Couleurs",
+};
+
+function show(id) {
+  screens.forEach(s => s.classList.toggle("active", s.id === id));
+  topbar.classList.toggle("hidden", id === "menu");
+  screenTitle.textContent = TITLES[id] || "Mon Petit Génie";
+  if (id === "alphabet") renderAlpha();
+  if (id === "numbers") renderNum();
+  if (id === "memory") startMemory();
+  if (id === "findletter") newFindLetter();
+  if (id === "findnumber") newFindNumber();
+  if (id === "colors") newColor();
+}
+
+document.querySelectorAll(".menu-card").forEach(card => {
+  card.addEventListener("click", () => {
+    say(card.textContent.trim());
+    show(card.dataset.game);
+  });
+});
+
+document.getElementById("homeBtn").addEventListener("click", () => show("menu"));
+
+document.getElementById("soundBtn").addEventListener("click", e => {
+  soundOn = !soundOn;
+  e.currentTarget.textContent = soundOn ? "🔊" : "🔇";
+  if (!soundOn) speechSynthesis.cancel();
+});
+
+/* ---------- Célébration ---------- */
+
+function celebrate() {
+  const box = document.getElementById("celebrate");
+  document.getElementById("celebrateEmoji").textContent =
+    CELEBRATE_EMOJIS[Math.floor(Math.random() * CELEBRATE_EMOJIS.length)];
+  box.classList.remove("hidden");
+  setTimeout(() => box.classList.add("hidden"), 1000);
+  confetti();
+}
+
+function confetti() {
+  const colors = ["#ff5252","#4dabf7","#ffd43b","#51cf66","#f783ac","#9775fa"];
+  for (let i = 0; i < 24; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = colors[i % colors.length];
+    c.style.animationDuration = 1 + Math.random() * 1.2 + "s";
+    c.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2400);
+  }
+}
+
+/* ---------- Outils ---------- */
+
+const rand = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ---------- Alphabet ---------- */
+
+let alphaIdx = 0;
+
+function renderAlpha() {
+  const [letter, emoji, word] = ALPHABET[alphaIdx];
+  document.getElementById("alphaLetter").textContent = letter;
+  document.getElementById("alphaEmoji").textContent = emoji;
+  document.getElementById("alphaWord").textContent = word;
+  say(`${letter}. ${word}`);
+}
+
+document.getElementById("alphaPrev").addEventListener("click", () => {
+  alphaIdx = (alphaIdx - 1 + ALPHABET.length) % ALPHABET.length;
+  renderAlpha();
+});
+document.getElementById("alphaNext").addEventListener("click", () => {
+  alphaIdx = (alphaIdx + 1) % ALPHABET.length;
+  renderAlpha();
+});
+document.getElementById("alphaSay").addEventListener("click", () => {
+  const [letter, , word] = ALPHABET[alphaIdx];
+  say(`${letter}. ${word}`);
+});
+document.getElementById("alphaCard").addEventListener("click", () => {
+  const [letter, , word] = ALPHABET[alphaIdx];
+  say(`${letter}. ${word}`);
+});
+
+/* ---------- Chiffres ---------- */
+
+let numVal = 1;
+
+function renderNum() {
+  document.getElementById("numDigit").textContent = numVal;
+  document.getElementById("numWord").textContent = NUMBER_WORDS[numVal];
+  const dots = document.getElementById("numDots");
+  dots.innerHTML = "";
+  for (let i = 0; i < numVal; i++) {
+    const d = document.createElement("div");
+    d.className = "dot";
+    d.style.animationDelay = i * 0.08 + "s";
+    d.style.background = COLORS[i % COLORS.length][1];
+    dots.appendChild(d);
+  }
+  say(`${NUMBER_WORDS[numVal]}`);
+}
+
+document.getElementById("numPrev").addEventListener("click", () => {
+  numVal = numVal > 1 ? numVal - 1 : 10;
+  renderNum();
+});
+document.getElementById("numNext").addEventListener("click", () => {
+  numVal = numVal < 10 ? numVal + 1 : 1;
+  renderNum();
+});
+document.getElementById("numSay").addEventListener("click", () => say(NUMBER_WORDS[numVal]));
+document.getElementById("numCard").addEventListener("click", () => {
+  // Compter à voix haute en touchant la carte.
+  if (!soundOn) return;
+  speechSynthesis.cancel();
+  for (let i = 1; i <= numVal; i++) {
+    const u = new SpeechSynthesisUtterance(NUMBER_WORDS[i]);
+    u.lang = "fr-FR"; u.rate = 0.85; u.pitch = 1.15;
+    if (frVoice) u.voice = frVoice;
+    speechSynthesis.speak(u);
+  }
+});
+
+/* ---------- Memory ---------- */
+
+let memFirst = null, memLock = false, memPairs = 0;
+
+function startMemory() {
+  const grid = document.getElementById("memoryGrid");
+  grid.innerHTML = "";
+  memFirst = null; memLock = false; memPairs = 0;
+  document.getElementById("memoryHint").textContent = "Trouve les paires !";
+
+  const chosen = shuffle(MEMORY_EMOJIS).slice(0, 6); // 6 paires = 12 cartes
+  const deck = shuffle([...chosen, ...chosen]);
+
+  deck.forEach(emoji => {
+    const btn = document.createElement("button");
+    btn.className = "mem-card";
+    btn.dataset.emoji = emoji;
+    btn.textContent = emoji;
+    btn.addEventListener("click", () => flipMem(btn));
+    grid.appendChild(btn);
+  });
+}
+
+function flipMem(btn) {
+  if (memLock || btn.classList.contains("flipped") || btn.classList.contains("matched")) return;
+  btn.classList.add("flipped");
+
+  if (!memFirst) { memFirst = btn; return; }
+
+  if (memFirst.dataset.emoji === btn.dataset.emoji) {
+    memFirst.classList.add("matched");
+    btn.classList.add("matched");
+    memFirst = null;
+    memPairs++;
+    praise();
+    if (memPairs === 6) {
+      setTimeout(() => {
+        document.getElementById("memoryHint").textContent = "Tu as gagné ! 🏆";
+        say("Tu as gagné ! Bravo !");
+        celebrate();
+      }, 400);
+    }
+  } else {
+    memLock = true;
+    const first = memFirst;
+    setTimeout(() => {
+      first.classList.remove("flipped");
+      btn.classList.remove("flipped");
+      memFirst = null; memLock = false;
+    }, 850);
+  }
+}
+
+/* ---------- Trouve la lettre ---------- */
+
+function buildQuiz(optionsEl, choices, correct, label, onRight) {
+  optionsEl.innerHTML = "";
+  shuffle(choices).forEach(choice => {
+    const btn = document.createElement("button");
+    btn.className = "quiz-btn";
+    btn.textContent = choice;
+    btn.addEventListener("click", () => {
+      if (choice === correct) {
+        btn.classList.add("right");
+        praise();
+        celebrate();
+        setTimeout(onRight, 1100);
+      } else {
+        btn.classList.add("wrong");
+        say("Essaie encore !");
+        setTimeout(() => btn.classList.remove("wrong"), 400);
+      }
+    });
+    optionsEl.appendChild(btn);
+  });
+  say(label);
+}
+
+function newFindLetter() {
+  const correct = rand(ALPHABET)[0];
+  const others = shuffle(ALPHABET.filter(a => a[0] !== correct)).slice(0, 5).map(a => a[0]);
+  document.getElementById("findLetterTarget").textContent = correct;
+  buildQuiz(document.getElementById("findLetterOptions"),
+    [correct, ...others], correct, `Trouve la lettre ${correct}`, newFindLetter);
+}
+document.getElementById("findLetterSay").addEventListener("click", () =>
+  say(`Trouve la lettre ${document.getElementById("findLetterTarget").textContent}`));
+
+/* ---------- Trouve le chiffre ---------- */
+
+function newFindNumber() {
+  const correct = String(1 + Math.floor(Math.random() * 10));
+  const pool = ["1","2","3","4","5","6","7","8","9","10"].filter(n => n !== correct);
+  const others = shuffle(pool).slice(0, 5);
+  document.getElementById("findNumberTarget").textContent = correct;
+  buildQuiz(document.getElementById("findNumberOptions"),
+    [correct, ...others], correct,
+    `Trouve le chiffre ${NUMBER_WORDS[+correct]}`, newFindNumber);
+}
+document.getElementById("findNumberSay").addEventListener("click", () =>
+  say(`Trouve le chiffre ${NUMBER_WORDS[+document.getElementById("findNumberTarget").textContent]}`));
+
+/* ---------- Les couleurs ---------- */
+
+function newColor() {
+  const [name] = rand(COLORS);
+  const others = shuffle(COLORS.filter(c => c[0] !== name)).slice(0, 3);
+  const all = shuffle([COLORS.find(c => c[0] === name), ...others]);
+
+  document.getElementById("colorTarget").textContent = name;
+  const opts = document.getElementById("colorOptions");
+  opts.innerHTML = "";
+  all.forEach(([cname, hex]) => {
+    const btn = document.createElement("button");
+    btn.className = "color-swatch";
+    btn.style.background = hex;
+    btn.setAttribute("aria-label", cname);
+    btn.addEventListener("click", () => {
+      if (cname === name) {
+        praise(); celebrate();
+        setTimeout(newColor, 1100);
+      } else {
+        btn.classList.add("wrong");
+        say("Essaie encore !");
+        setTimeout(() => btn.classList.remove("wrong"), 400);
+      }
+    });
+    opts.appendChild(btn);
+  });
+  say(`Touche la couleur ${name}`);
+}
+document.getElementById("colorSay").addEventListener("click", () =>
+  say(`Touche la couleur ${document.getElementById("colorTarget").textContent}`));
+
+/* ---------- Démarrage ---------- */
+show("menu");
+
+</script>
+</body>
+</html>
