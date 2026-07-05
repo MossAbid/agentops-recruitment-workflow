@@ -1,0 +1,12 @@
+{
+  "hotkey": "alt_r",
+  "mode": "hold",
+  "language": null,
+  "stt_backend": "auto",
+  "mlx_model": "mlx-community/whisper-large-v3-turbo",
+  "faster_whisper_model": "small",
+  "ollama_url": "http://localhost:11434",
+  "ollama_model": "qwen2.5:7b-instruct",
+  "cleanup": true,
+  "sounds": true
+}
