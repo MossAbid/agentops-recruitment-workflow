@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentic OS — Control Plane</title>
+</head>
+<body>
+<style>
+  :root {
+    --page: #f9f9f7; --surface: #fcfcfb;
+    --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --accent: #2a78d6; --ok: #2a78d6; --fail: #d03b3b;
+    --good-text: #006300; --crit-text: #d03b3b;
+    --chip-good: rgba(12,163,12,0.12); --chip-crit: rgba(208,59,59,0.12);
+  }
+  @media (prefers-color-scheme: dark) { :root {
+    --page: #0d0d0d; --surface: #1a1a19;
+    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+    --accent: #3987e5; --ok: #3987e5; --fail: #d03b3b;
+    --good-text: #0ca30c; --crit-text: #e66767;
+    --chip-good: rgba(12,163,12,0.18); --chip-crit: rgba(230,103,103,0.18);
+  } }
+  :root[data-theme="light"] {
+    --page: #f9f9f7; --surface: #fcfcfb;
+    --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --accent: #2a78d6; --ok: #2a78d6; --fail: #d03b3b;
+    --good-text: #006300; --crit-text: #d03b3b;
+    --chip-good: rgba(12,163,12,0.12); --chip-crit: rgba(208,59,59,0.12);
+  }
+  :root[data-theme="dark"] {
+    --page: #0d0d0d; --surface: #1a1a19;
+    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+    --accent: #3987e5; --ok: #3987e5; --fail: #d03b3b;
+    --good-text: #0ca30c; --crit-text: #e66767;
+    --chip-good: rgba(12,163,12,0.18); --chip-crit: rgba(230,103,103,0.18);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 56px; display: grid; gap: 20px; }
+  header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  header h1 { font-size: 20px; font-weight: 650; margin: 0; }
+  header .scope { color: var(--muted); font-size: 13px; }
+  .pill {
+    margin-left: auto; font-size: 12px; padding: 2px 10px; border-radius: 999px;
+    border: 1px solid var(--border); color: var(--ink-2); display: none;
+  }
+  .pill.on { display: inline-block; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .tile .label, .card h2 {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 6px;
+  }
+  .tile .value { font-size: 30px; font-weight: 650; line-height: 1.15; }
+  .tile .sub { font-size: 12.5px; color: var(--ink-2); }
+  .tile .sub .up { color: var(--good-text); }
+  .legend { display: flex; gap: 16px; font-size: 12.5px; color: var(--ink-2); margin: 2px 0 10px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .chartbox { overflow-x: auto; }
+  svg text { font: 11px system-ui, sans-serif; fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
+  .tblbox { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th { text-align: left; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+       color: var(--muted); font-weight: 600; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--grid); }
+  td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--grid); color: var(--ink-2); }
+  td:first-child { color: var(--ink); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 0; }
+  .chip { font-size: 12px; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
+  .chip.ok   { background: var(--chip-good); color: var(--good-text); }
+  .chip.fail { background: var(--chip-crit); color: var(--crit-text); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+  #tip {
+    position: fixed; pointer-events: none; display: none; z-index: 10;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; font-size: 12.5px; box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    font-variant-numeric: tabular-nums;
+  }
+  #tip .d { color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+  #tip .r { color: var(--ink-2); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Agentic OS · Control Plane</h1>
+    <span class="scope">agentops-recruitment-workflow · perf-lab</span>
+    <span class="pill" id="demo">demo data — API offline</span>
+  </header>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h2>Runs per day — last 30 days</h2>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--ok)"></i>Succeeded</span>
+      <span><i class="swatch" style="background:var(--fail)"></i>Failed</span>
+    </div>
+    <div class="chartbox"><svg id="chart" width="1020" height="200" role="img"
+      aria-label="Stacked bar chart of succeeded and failed runs per day over the last 30 days"></svg></div>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h2>Skill leaderboard — 30 days</h2>
+      <div class="tblbox"><table id="skills">
+        <thead><tr><th>Skill</th><th class="num">Runs</th><th class="num">Success</th><th class="num">Median</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Routines</h2>
+      <div class="tblbox"><table id="routines">
+        <thead><tr><th>Routine</th><th>Cron</th><th>Last run</th><th>State</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Recent runs</h2>
+    <div class="tblbox"><table id="runs">
+      <thead><tr><th>Skill</th><th>Repo</th><th>Trigger</th><th>Status</th><th class="num">Duration</th><th>Artifact</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </div>
+</div>
+<div id="tip"></div>
+
+<script>
+(async function () {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  /* ---------- data: live API with demo fallback ---------- */
+  let summary, runs, demo = false;
+  try {
+    const [a, b] = await Promise.all([fetch("/api/metrics/summary"), fetch("/api/runs?limit=12")]);
+    if (!a.ok || !b.ok) throw 0;
+    summary = await a.json(); runs = await b.json();
+    if (!summary.runs) throw 0;              // empty DB → show the demo shape
+  } catch { demo = true; $("#demo").classList.add("on"); ({summary, runs} = demoData()); }
+
+  function demoData() {
+    const days = {}, today = Date.now();
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today - i * 864e5).toISOString().slice(0, 10);
+      const dow = new Date(d).getDay();
+      const base = (dow === 0 || dow === 6) ? 1 : 3;
+      days[d] = { ok: base + Math.floor(rnd() * 4), failed: rnd() < 0.25 ? 1 : 0 };
+    }
+    return {
+      summary: {
+        runs: 96, success_rate: 0.94, p95_duration_s: 312, cost_usd: 4.87,
+        by_day: days,
+        by_skill: {
+          "ops-digest":       { runs: 30, ok: 29, med: 95 },
+          "screen-candidate": { runs: 24, ok: 23, med: 140 },
+          "pipeline-report":  { runs: 5,  ok: 5,  med: 210 },
+          "perflab-program":  { runs: 4,  ok: 4,  med: 180 },
+          "perflab-release":  { runs: 3,  ok: 2,  med: 260 }
+        }
+      },
+      runs: [
+        { skill: "ops-digest", repo: "agentops-recruitment-workflow", trigger_src: "routine:daily-ops-digest", status: "ok", dur: 88, artifact: "reports/ops/2026-07-05.md" },
+        { skill: "screen-candidate", repo: "agentops-recruitment-workflow", trigger_src: "human", status: "ok", dur: 132, artifact: "data/screenings/2026-07-04-j-doe.json" },
+        { skill: "perflab-release", repo: "perf-lab", trigger_src: "human", status: "failed", dur: 251, artifact: "", detail: "backend.test.js: 1 assertion" },
+        { skill: "pipeline-report", repo: "agentops-recruitment-workflow", trigger_src: "routine:weekly-pipeline-report", status: "ok", dur: 204, artifact: "reports/pipeline/2026-27.md" },
+        { skill: "perflab-program", repo: "perf-lab", trigger_src: "human", status: "ok", dur: 176, artifact: "programs/hyrox-v3.json" }
+      ]
+    };
+  }
+
+  /* ---------- tiles ---------- */
+  const fmtDur = s => s == null ? "—" : (s >= 60 ? Math.round(s / 60) + " min" : Math.round(s) + " s");
+  const tiles = [
+    ["Runs · 30 d", summary.runs, ""],
+    ["Success rate", summary.success_rate == null ? "—" : Math.round(summary.success_rate * 100) + "%", ""],
+    ["p95 duration", fmtDur(summary.p95_duration_s), ""],
+    ["Est. cost · 30 d", "$" + (summary.cost_usd ?? 0).toFixed(2), ""]
+  ];
+  $("#tiles").innerHTML = tiles.map(([l, v, s]) =>
+    `<div class="card tile"><div class="label">${l}</div><div class="value">${v}</div>` +
+    (s ? `<div class="sub">${s}</div>` : "") + `</div>`).join("");
+
+  /* ---------- runs-per-day stacked bars ---------- */
+  const svg = $("#chart"), tip = $("#tip");
+  const dayKeys = Object.keys(summary.by_day || {}).sort();
+  const W = 1020, H = 200, padL = 26, padB = 20, padT = 6;
+  const iw = W - padL - 6, ih = H - padB - padT;
+  const rawMax = Math.max(1, ...dayKeys.map(d => summary.by_day[d].ok + summary.by_day[d].failed));
+  const max = rawMax <= 4 ? rawMax : Math.ceil(rawMax / 4) * 4;   // even tick values
+  const bw = Math.min(22, Math.max(6, iw / Math.max(1, dayKeys.length) - 2));
+  const step = iw / Math.max(1, dayKeys.length);
+  let els = "";
+  // gridlines + y ticks
+  const ticks = max <= 4 ? max : 4;
+  for (let i = 0; i <= ticks; i++) {
+    const v = Math.round(max * i / ticks), y = padT + ih - ih * i / ticks;
+    els += `<line x1="${padL}" y1="${y}" x2="${W - 6}" y2="${y}" stroke="var(--grid)" stroke-width="1"/>`;
+    els += `<text x="${padL - 6}" y="${y + 3}" text-anchor="end">${v}</text>`;
+  }
+  dayKeys.forEach((d, i) => {
+    const { ok, failed } = summary.by_day[d];
+    const x = padL + i * step + (step - bw) / 2;
+    const hOk = ih * ok / max, hF = ih * failed / max;
+    const yOk = padT + ih - hOk;
+    if (ok) els += failed
+      ? `<rect x="${x}" y="${yOk}" width="${bw}" height="${hOk}" fill="var(--ok)"/>`
+      : `<path d="M${x},${yOk + 4} a4,4 0 0 1 4,-4 h${bw - 8} a4,4 0 0 1 4,4 v${Math.max(0, hOk - 4)} h${-bw} Z" fill="var(--ok)"/>`;
+    if (failed) {
+      const yF = yOk - hF - 2;   // 2px surface gap between segments
+      els += `<path d="M${x},${yF + 4} a4,4 0 0 1 4,-4 h${bw - 8} a4,4 0 0 1 4,4 v${Math.max(0, hF - 4)} h${-bw} Z" fill="var(--fail)"/>`;
+    }
+    // invisible hover target covering the full column
+    els += `<rect class="hit" data-i="${i}" x="${padL + i * step}" y="${padT}" width="${step}" height="${ih}" fill="transparent"/>`;
+    if (i % 5 === 0) els += `<text x="${x + bw / 2}" y="${H - 5}" text-anchor="middle">${d.slice(5)}</text>`;
+  });
+  els += `<line x1="${padL}" y1="${padT + ih}" x2="${W - 6}" y2="${padT + ih}" stroke="var(--baseline)" stroke-width="1"/>`;
+  svg.innerHTML = els;
+  svg.addEventListener("mousemove", e => {
+    const t = e.target.closest(".hit"); if (!t) { tip.style.display = "none"; return; }
+    const d = dayKeys[+t.dataset.i], v = summary.by_day[d];
+    tip.innerHTML = `<div class="d">${d}</div><div class="r">Succeeded ${v.ok} · Failed ${v.failed}</div>`;
+    tip.style.display = "block";
+    tip.style.left = Math.min(e.clientX + 12, innerWidth - 170) + "px";
+    tip.style.top = (e.clientY + 14) + "px";
+  });
+  svg.addEventListener("mouseleave", () => tip.style.display = "none");
+
+  /* ---------- skill leaderboard ---------- */
+  $("#skills tbody").innerHTML = Object.entries(summary.by_skill || {})
+    .sort((a, b) => b[1].runs - a[1].runs)
+    .map(([k, v]) => `<tr><td><code>/${esc(k)}</code></td><td class="num">${v.runs}</td>` +
+      `<td class="num">${Math.round(100 * v.ok / v.runs)}%</td>` +
+      `<td class="num">${v.med ? fmtDur(v.med) : "—"}</td></tr>`).join("")
+    || `<tr><td colspan="4">No runs yet.</td></tr>`;
+
+  /* ---------- routines (static catalog; wired to /api/routines in Phase 2) ---------- */
+  const routines = [
+    ["weekly-pipeline-report", "0 8 * * 1", demo ? "Mon 08:00" : "—", "proposed"],
+    ["daily-ops-digest", "30 8 * * 1-5", demo ? "today 08:30" : "—", "proposed"],
+    ["perflab-health", "0 9 * * 6", demo ? "Sat 09:00" : "—", "proposed"]
+  ];
+  $("#routines tbody").innerHTML = routines.map(r =>
+    `<tr><td>${r[0]}</td><td><code>${r[1]}</code></td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("");
+
+  /* ---------- recent runs ---------- */
+  $("#runs tbody").innerHTML = (runs || []).map(r => {
+    const dur = r.dur ?? (r.ended_at && r.started_at ? r.ended_at - r.started_at : null);
+    const chip = r.status === "ok" ? `<span class="chip ok">ok</span>`
+      : r.status === "failed" ? `<span class="chip fail">failed</span>` : esc(r.status);
+    return `<tr><td><code>/${esc(r.skill)}</code></td><td>${esc(r.repo || "")}</td>` +
+      `<td>${esc(r.trigger_src || "")}</td><td>${chip}${r.detail ? " · " + esc(r.detail) : ""}</td>` +
+      `<td class="num">${fmtDur(dur)}</td><td>${r.artifact ? `<code>${esc(r.artifact)}</code>` : "—"}</td></tr>`;
+  }).join("") || `<tr><td colspan="6">No runs yet.</td></tr>`;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+control-plane/control.db
+data/screenings/*.json
+reports/
+__pycache__/
+.env
