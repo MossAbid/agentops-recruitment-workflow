@@ -8,6 +8,15 @@ Pipeline: `hotkey → mic capture → mlx-whisper (STT) → Ollama LLM (cleanup)
 
 ## Setup (Apple Silicon, macOS 14+)
 
+**One command:**
+
+```bash
+cd whisperflow && ./setup.sh
+```
+
+It installs Ollama, pulls the models, sets up the Python env, and launches
+the app. Or do it manually:
+
 ```bash
 # 1. Python deps
 cd whisperflow
