@@ -76,7 +76,7 @@ def _run(run_id: str, skill: str, args: str, cwd: Path):
     """Execute a headless run and record the outcome. Runs in a thread."""
     cmd = ["claude", "-p", f"/{skill} {args}".strip(),
            "--output-format", "json"]
-    status, detail, usage = "ok", "", {}
+    status, detail, usage, cost = "ok", "", {}, 0.0
     try:
         out = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True,
                              timeout=1800)
@@ -84,7 +84,11 @@ def _run(run_id: str, skill: str, args: str, cwd: Path):
             status, detail = "failed", (out.stderr or out.stdout)[-500:]
         else:
             try:
-                usage = json.loads(out.stdout).get("usage", {})
+                payload = json.loads(out.stdout)
+                usage = payload.get("usage", {})
+                cost = payload.get("total_cost_usd", 0.0)
+                if payload.get("is_error"):
+                    status, detail = "failed", str(payload.get("result", ""))[:500]
             except (json.JSONDecodeError, AttributeError):
                 pass
     except FileNotFoundError:
@@ -94,9 +98,9 @@ def _run(run_id: str, skill: str, args: str, cwd: Path):
     with db() as c:
         c.execute(
             "UPDATE runs SET status=?, ended_at=?, tokens_in=?, tokens_out=?,"
-            " detail=? WHERE id=?",
+            " cost_usd=?, detail=? WHERE id=?",
             (status, time.time(), usage.get("input_tokens", 0),
-             usage.get("output_tokens", 0), detail, run_id))
+             usage.get("output_tokens", 0), cost, detail, run_id))
 
 
 @app.post("/api/runs")
