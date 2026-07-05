@@ -7,91 +7,102 @@
 </head>
 <body>
 <style>
-  :root {
-    --page: #f9f9f7; --surface: #fcfcfb;
-    --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
-    --grid: #e1e0d9; --baseline: #c3c2b7;
-    --border: rgba(11,11,11,0.10);
-    --accent: #2a78d6; --ok: #2a78d6; --fail: #d03b3b;
-    --good-text: #006300; --crit-text: #d03b3b;
-    --chip-good: rgba(12,163,12,0.12); --chip-crit: rgba(208,59,59,0.12);
-  }
-  @media (prefers-color-scheme: dark) { :root {
-    --page: #0d0d0d; --surface: #1a1a19;
-    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
-    --grid: #2c2c2a; --baseline: #383835;
-    --border: rgba(255,255,255,0.10);
-    --accent: #3987e5; --ok: #3987e5; --fail: #d03b3b;
-    --good-text: #0ca30c; --crit-text: #e66767;
-    --chip-good: rgba(12,163,12,0.18); --chip-crit: rgba(230,103,103,0.18);
-  } }
-  :root[data-theme="light"] {
-    --page: #f9f9f7; --surface: #fcfcfb;
-    --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
-    --grid: #e1e0d9; --baseline: #c3c2b7;
-    --border: rgba(11,11,11,0.10);
-    --accent: #2a78d6; --ok: #2a78d6; --fail: #d03b3b;
-    --good-text: #006300; --crit-text: #d03b3b;
-    --chip-good: rgba(12,163,12,0.12); --chip-crit: rgba(208,59,59,0.12);
-  }
-  :root[data-theme="dark"] {
-    --page: #0d0d0d; --surface: #1a1a19;
-    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
-    --grid: #2c2c2a; --baseline: #383835;
-    --border: rgba(255,255,255,0.10);
-    --accent: #3987e5; --ok: #3987e5; --fail: #d03b3b;
-    --good-text: #0ca30c; --crit-text: #e66767;
-    --chip-good: rgba(12,163,12,0.18); --chip-crit: rgba(230,103,103,0.18);
+  /* Committed vibrant dark theme — the neon identity IS the design, both OS themes render it. */
+  :root, :root[data-theme="light"], :root[data-theme="dark"] {
+    --page: #070a14; --surface: #11162a; --surface-2: #171d36;
+    --ink: #f1f5ff; --ink-2: #9aa5c9; --muted: #667099;
+    --grid: rgba(148,163,255,0.09); --baseline: rgba(148,163,255,0.22);
+    --border: rgba(148,163,255,0.16);
+    --ok: #0891b2; --ok-hi: #22d3ee;         /* validated mark hue + neon top */
+    --fail: #f43f5e; --fail-hi: #fb7185;
+    --neon-cyan: #22d3ee; --neon-violet: #a78bfa; --neon-magenta: #f472b6; --neon-lime: #a3e635;
+    --chip-good: rgba(34,211,238,0.14); --chip-crit: rgba(244,63,94,0.16);
+    color-scheme: dark;
   }
   * { box-sizing: border-box; }
   body {
-    margin: 0; background: var(--page); color: var(--ink);
+    margin: 0; min-height: 100vh; background: var(--page); color: var(--ink);
     font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background-image:
+      radial-gradient(700px 420px at 12% -8%, rgba(124,58,237,0.22), transparent 65%),
+      radial-gradient(640px 400px at 92% 4%, rgba(6,182,212,0.16), transparent 65%),
+      radial-gradient(800px 520px at 55% 110%, rgba(244,114,182,0.10), transparent 65%);
+    background-attachment: fixed;
   }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 56px; display: grid; gap: 20px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 30px 20px 60px; display: grid; gap: 20px; }
   header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  header h1 { font-size: 20px; font-weight: 650; margin: 0; }
+  header h1 {
+    font-size: 22px; font-weight: 750; margin: 0; letter-spacing: -0.01em;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-violet) 55%, var(--neon-magenta));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
   header .scope { color: var(--muted); font-size: 13px; }
   .pill {
-    margin-left: auto; font-size: 12px; padding: 2px 10px; border-radius: 999px;
-    border: 1px solid var(--border); color: var(--ink-2); display: none;
+    margin-left: auto; font-size: 12px; padding: 3px 12px; border-radius: 999px; display: none;
+    color: var(--neon-cyan); border: 1px solid rgba(34,211,238,0.45);
+    box-shadow: 0 0 12px rgba(34,211,238,0.25), inset 0 0 8px rgba(34,211,238,0.08);
   }
   .pill.on { display: inline-block; }
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
-  .tile .label, .card h2 {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 6px;
+  .card {
+    background: linear-gradient(180deg, var(--surface-2), var(--surface) 70%);
+    border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px;
+    box-shadow: 0 10px 30px rgba(3,6,18,0.55);
   }
-  .tile .value { font-size: 30px; font-weight: 650; line-height: 1.15; }
-  .tile .sub { font-size: 12.5px; color: var(--ink-2); }
-  .tile .sub .up { color: var(--good-text); }
-  .legend { display: flex; gap: 16px; font-size: 12.5px; color: var(--ink-2); margin: 2px 0 10px; }
-  .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .tile { position: relative; overflow: hidden; }
+  .tile::after {   /* top edge light */
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--tile-accent, var(--neon-cyan)), transparent);
+    opacity: 0.9;
+  }
+  .tile .label, .card h2 {
+    font-size: 11px; font-weight: 650; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 8px;
+  }
+  .tile .value {
+    font-size: 32px; font-weight: 750; line-height: 1.1; letter-spacing: -0.01em;
+    color: var(--tile-accent, var(--neon-cyan));
+    text-shadow: 0 0 18px color-mix(in srgb, var(--tile-accent, var(--neon-cyan)) 45%, transparent);
+    font-variant-numeric: tabular-nums;
+  }
+  .tile .sub { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; }
+  .tile svg.spark { display: block; margin-top: 10px; }
+  .legend { display: flex; gap: 18px; font-size: 12.5px; color: var(--ink-2); margin: 2px 0 12px; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+  .swatch.ok { background: linear-gradient(180deg, var(--ok-hi), var(--ok)); box-shadow: 0 0 8px rgba(34,211,238,0.5); }
+  .swatch.fail { background: linear-gradient(180deg, var(--fail-hi), var(--fail)); box-shadow: 0 0 8px rgba(244,63,94,0.5); }
   .chartbox { overflow-x: auto; }
   svg text { font: 11px system-ui, sans-serif; fill: var(--muted); font-variant-numeric: tabular-nums; }
+  @media (prefers-reduced-motion: no-preference) {
+    .bar { transform-origin: center bottom; transform-box: fill-box; animation: grow 0.6s cubic-bezier(.2,.8,.3,1) backwards; }
+    @keyframes grow { from { transform: scaleY(0); } }
+  }
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
   .tblbox { overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-  th { text-align: left; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
-       color: var(--muted); font-weight: 600; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--grid); }
-  td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--grid); color: var(--ink-2); }
+  th { text-align: left; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
+       color: var(--muted); font-weight: 650; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--grid); }
+  td { padding: 8px 10px 8px 0; border-bottom: 1px solid var(--grid); color: var(--ink-2); }
   td:first-child { color: var(--ink); }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   tr:last-child td { border-bottom: 0; }
-  .chip { font-size: 12px; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
-  .chip.ok   { background: var(--chip-good); color: var(--good-text); }
-  .chip.fail { background: var(--chip-crit); color: var(--crit-text); }
-  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+  .chip { font-size: 12px; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+  .chip.ok   { background: var(--chip-good); color: var(--neon-cyan); box-shadow: 0 0 10px rgba(34,211,238,0.18); }
+  .chip.fail { background: var(--chip-crit); color: var(--fail-hi); box-shadow: 0 0 10px rgba(244,63,94,0.20); }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px;
+    color: var(--neon-violet); background: rgba(167,139,250,0.10);
+    padding: 1px 6px; border-radius: 6px;
+  }
   #tip {
     position: fixed; pointer-events: none; display: none; z-index: 10;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-    padding: 8px 10px; font-size: 12.5px; box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-    font-variant-numeric: tabular-nums;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px 11px; font-size: 12.5px; font-variant-numeric: tabular-nums;
+    box-shadow: 0 8px 24px rgba(3,6,18,0.7), 0 0 16px rgba(34,211,238,0.10);
   }
-  #tip .d { color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+  #tip .d { color: var(--ink); font-weight: 650; margin-bottom: 2px; }
   #tip .r { color: var(--ink-2); }
 </style>
 
@@ -107,8 +118,8 @@
   <div class="card">
     <h2>Runs per day — last 30 days</h2>
     <div class="legend">
-      <span><i class="swatch" style="background:var(--ok)"></i>Succeeded</span>
-      <span><i class="swatch" style="background:var(--fail)"></i>Failed</span>
+      <span><i class="swatch ok"></i>Succeeded</span>
+      <span><i class="swatch fail"></i>Failed</span>
     </div>
     <div class="chartbox"><svg id="chart" width="1020" height="200" role="img"
       aria-label="Stacked bar chart of succeeded and failed runs per day over the last 30 days"></svg></div>
@@ -145,6 +156,7 @@
 (async function () {
   const $ = s => document.querySelector(s);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const noMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------- data: live API with demo fallback ---------- */
   let summary, runs, demo = false;
@@ -187,29 +199,66 @@
     };
   }
 
-  /* ---------- tiles ---------- */
+  /* ---------- tiles with sparklines + count-up ---------- */
+  const dayKeys = Object.keys(summary.by_day || {}).sort();
+  const totals = dayKeys.map(d => summary.by_day[d].ok + summary.by_day[d].failed);
+  const okRate = dayKeys.map(d => {
+    const v = summary.by_day[d], t = v.ok + v.failed;
+    return t ? v.ok / t : 1;
+  });
   const fmtDur = s => s == null ? "—" : (s >= 60 ? Math.round(s / 60) + " min" : Math.round(s) + " s");
+
+  function spark(series, accent) {
+    if (!series.length) return "";
+    const w = 150, h = 34, max = Math.max(...series, 1e-9), min = Math.min(...series, max - 1e-9);
+    const pt = (v, i) => `${(i / Math.max(1, series.length - 1)) * w},${h - 3 - (h - 8) * ((v - min) / (max - min))}`;
+    const line = series.map(pt).join(" ");
+    const id = "sg" + accent.replace(/[^a-z0-9]/gi, "");
+    return `<svg class="spark" width="${w}" height="${h}" aria-hidden="true">
+      <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${accent}" stop-opacity="0.35"/>
+        <stop offset="1" stop-color="${accent}" stop-opacity="0"/></linearGradient></defs>
+      <polygon points="0,${h} ${line} ${w},${h}" fill="url(#${id})"/>
+      <polyline points="${line}" fill="none" stroke="${accent}" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="${pt(series.at(-1), series.length - 1).split(",")[0]}"
+              cy="${pt(series.at(-1), series.length - 1).split(",")[1]}" r="3" fill="${accent}"/>
+    </svg>`;
+  }
+
   const tiles = [
-    ["Runs · 30 d", summary.runs, ""],
-    ["Success rate", summary.success_rate == null ? "—" : Math.round(summary.success_rate * 100) + "%", ""],
-    ["p95 duration", fmtDur(summary.p95_duration_s), ""],
-    ["Est. cost · 30 d", "$" + (summary.cost_usd ?? 0).toFixed(2), ""]
+    { label: "Runs · 30 d", n: summary.runs, fmt: v => Math.round(v), accent: "var(--neon-cyan)", spark: spark(totals, "#22d3ee") },
+    { label: "Success rate", n: (summary.success_rate ?? 0) * 100, fmt: v => Math.round(v) + "%", accent: "var(--neon-lime)", spark: spark(okRate, "#a3e635") },
+    { label: "p95 duration", n: summary.p95_duration_s ?? 0, fmt: fmtDur, accent: "var(--neon-violet)", sub: "slowest skill runs, 30 d" },
+    { label: "Est. cost · 30 d", n: summary.cost_usd ?? 0, fmt: v => "$" + v.toFixed(2), accent: "var(--neon-magenta)", sub: "from stream-json usage" }
   ];
-  $("#tiles").innerHTML = tiles.map(([l, v, s]) =>
-    `<div class="card tile"><div class="label">${l}</div><div class="value">${v}</div>` +
-    (s ? `<div class="sub">${s}</div>` : "") + `</div>`).join("");
+  $("#tiles").innerHTML = tiles.map((t, i) =>
+    `<div class="card tile" style="--tile-accent:${t.accent}"><div class="label">${t.label}</div>` +
+    `<div class="value" id="tv${i}">${t.fmt(t.n)}</div>` +
+    (t.spark || (t.sub ? `<div class="sub">${t.sub}</div>` : ""))
+    + `</div>`).join("");
+  if (!noMotion) tiles.forEach((t, i) => {
+    const el = $("#tv" + i), t0 = performance.now(), D = 700;
+    (function tick(now) {
+      const p = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = t.fmt(t.n * e);
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  });
 
   /* ---------- runs-per-day stacked bars ---------- */
   const svg = $("#chart"), tip = $("#tip");
-  const dayKeys = Object.keys(summary.by_day || {}).sort();
   const W = 1020, H = 200, padL = 26, padB = 20, padT = 6;
   const iw = W - padL - 6, ih = H - padB - padT;
-  const rawMax = Math.max(1, ...dayKeys.map(d => summary.by_day[d].ok + summary.by_day[d].failed));
+  const rawMax = Math.max(1, ...totals);
   const max = rawMax <= 4 ? rawMax : Math.ceil(rawMax / 4) * 4;   // even tick values
   const bw = Math.min(22, Math.max(6, iw / Math.max(1, dayKeys.length) - 2));
   const step = iw / Math.max(1, dayKeys.length);
-  let els = "";
-  // gridlines + y ticks
+  let els = `<defs>
+    <linearGradient id="gok" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#0891b2"/></linearGradient>
+    <linearGradient id="gfail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fb7185"/><stop offset="1" stop-color="#f43f5e"/></linearGradient>
+  </defs>`;
   const ticks = max <= 4 ? max : 4;
   for (let i = 0; i <= ticks; i++) {
     const v = Math.round(max * i / ticks), y = padT + ih - ih * i / ticks;
@@ -221,14 +270,14 @@
     const x = padL + i * step + (step - bw) / 2;
     const hOk = ih * ok / max, hF = ih * failed / max;
     const yOk = padT + ih - hOk;
+    const delay = `style="animation-delay:${i * 14}ms"`;
     if (ok) els += failed
-      ? `<rect x="${x}" y="${yOk}" width="${bw}" height="${hOk}" fill="var(--ok)"/>`
-      : `<path d="M${x},${yOk + 4} a4,4 0 0 1 4,-4 h${bw - 8} a4,4 0 0 1 4,4 v${Math.max(0, hOk - 4)} h${-bw} Z" fill="var(--ok)"/>`;
+      ? `<rect class="bar" ${delay} x="${x}" y="${yOk}" width="${bw}" height="${hOk}" fill="url(#gok)"/>`
+      : `<path class="bar" ${delay} d="M${x},${yOk + 4} a4,4 0 0 1 4,-4 h${bw - 8} a4,4 0 0 1 4,4 v${Math.max(0, hOk - 4)} h${-bw} Z" fill="url(#gok)"/>`;
     if (failed) {
       const yF = yOk - hF - 2;   // 2px surface gap between segments
-      els += `<path d="M${x},${yF + 4} a4,4 0 0 1 4,-4 h${bw - 8} a4,4 0 0 1 4,4 v${Math.max(0, hF - 4)} h${-bw} Z" fill="var(--fail)"/>`;
+      els += `<path class="bar" ${delay} d="M${x},${yF + 4} a4,4 0 0 1 4,-4 h${bw - 8} a4,4 0 0 1 4,4 v${Math.max(0, hF - 4)} h${-bw} Z" fill="url(#gfail)"/>`;
     }
-    // invisible hover target covering the full column
     els += `<rect class="hit" data-i="${i}" x="${padL + i * step}" y="${padT}" width="${step}" height="${ih}" fill="transparent"/>`;
     if (i % 5 === 0) els += `<text x="${x + bw / 2}" y="${H - 5}" text-anchor="middle">${d.slice(5)}</text>`;
   });
