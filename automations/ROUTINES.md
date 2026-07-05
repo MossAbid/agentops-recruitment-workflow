@@ -3,18 +3,23 @@
 A routine is a scheduled trigger whose prompt is just "run `/skill-name`".
 All logic stays in the skill (versioned in git); the routine only owns the *when*.
 
-None of these are enabled yet — this file is the spec. To enable one, tell
-Claude in a session on this repo: **"enable the &lt;name&gt; routine from
-automations/ROUTINES.md"**. Claude creates it with `create_trigger` in
-fresh-session mode so each firing starts clean.
+**Status: enabled** (2026-07-05, fresh-session mode). Cron runs in UTC; times
+below are Paris summer time (UTC+2). While the skills live only on the
+`claude/agentic-os-claude-code-2nq841` branch, each routine's prompt checks out
+that branch first and falls back to the default branch once it's merged.
 
 ## Catalog
 
-| Routine | Cron | Prompt | Notes |
-|---|---|---|---|
-| `weekly-pipeline-report` | `0 8 * * 1` (Mon 08:00) | `Run /pipeline-report 7d in agentops-recruitment-workflow, commit the report to the default branch.` | Notify by email on completion. |
-| `daily-ops-digest` | `30 8 * * 1-5` (weekdays 08:30) | `Run /ops-digest in agentops-recruitment-workflow, commit the report. Only send a push notification if the "Needs action" section is non-empty.` | Silence is the default; noise only when actionable. |
-| `perflab-health` | `0 9 * * 6` (Sat 09:00) | `In perf-lab: run both test files in tests/, verify the latest Pages deploy succeeded, and check sw.js CACHE was bumped if shell files changed. Report only failures.` | Complements the in-app 7-day backup reminder. |
+| Routine | Cron (UTC) | Fires (Paris) | Trigger ID | Notify |
+|---|---|---|---|---|
+| `weekly-pipeline-report` | `0 6 * * 1` | Mon 08:00 | `trig_012EZvM1SxmsZB8TtnQ74VTo` | email on completion |
+| `daily-ops-digest` | `30 6 * * 1-5` | weekdays 08:30 | `trig_018ipK6gzfDJ6vqUq6gUHhfs` | push, noteworthy only |
+| `perflab-health` | `0 7 * * 6` | Sat 09:00 | `trig_01HJzq4Z9f7Sf26yhs1WRiSZ` | push, failures only |
+
+`weekly-pipeline-report` runs `/pipeline-report 7d` and commits the report.
+`daily-ops-digest` runs `/ops-digest`, commits, and stays quiet unless
+"Needs action" is non-empty. `perflab-health` is read-only: perf-lab test
+suites + Pages deploy check + `sw.js` CACHE-bump consistency.
 
 ## Rules
 

@@ -136,7 +136,7 @@
     <div class="card">
       <h2>Routines</h2>
       <div class="tblbox"><table id="routines">
-        <thead><tr><th>Routine</th><th>Cron</th><th>Last run</th><th>State</th></tr></thead>
+        <thead><tr><th>Routine</th><th>Cron (UTC)</th><th>Schedule</th><th>State</th></tr></thead>
         <tbody></tbody>
       </table></div>
     </div>
@@ -303,9 +303,9 @@
 
   /* ---------- routines (static catalog; wired to /api/routines in Phase 2) ---------- */
   const routines = [
-    ["weekly-pipeline-report", "0 8 * * 1", demo ? "Mon 08:00" : "—", "proposed"],
-    ["daily-ops-digest", "30 8 * * 1-5", demo ? "today 08:30" : "—", "proposed"],
-    ["perflab-health", "0 9 * * 6", demo ? "Sat 09:00" : "—", "proposed"]
+    ["weekly-pipeline-report", "0 6 * * 1", "Mon 08:00 Paris", "enabled"],
+    ["daily-ops-digest", "30 6 * * 1-5", "weekdays 08:30 Paris", "enabled"],
+    ["perflab-health", "0 7 * * 6", "Sat 09:00 Paris", "enabled"]
   ];
   $("#routines tbody").innerHTML = routines.map(r =>
     `<tr><td>${r[0]}</td><td><code>${r[1]}</code></td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("");
