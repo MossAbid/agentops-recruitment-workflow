@@ -1,6 +1,19 @@
-# Control plane prototype
+# Control plane prototype — M.O.S.S.
 
-Design: `docs/CONTROL_PLANE.md`.
+Design: `docs/CONTROL_PLANE.md`. The UI is a V.A.U.L.T.-style HUD terminal
+(black + chartreuse, particle core, command deck). The COMMAND DECK buttons
+POST to `/api/runs`, which executes skills headlessly via the `claude` CLI —
+so run this on the machine where Claude Code is installed and logged in.
+
+## Run locally (recommended)
+
+```bash
+git clone -b claude/agentic-os-claude-code-2nq841 \
+    git@github.com:MossAbid/agentops-recruitment-workflow.git
+cd agentops-recruitment-workflow/control-plane
+pip install fastapi uvicorn
+uvicorn app:app --port 8090      # then open http://localhost:8090
+```
 
 ```bash
 pip install -r ../requirements.txt          # fastapi + uvicorn already listed
