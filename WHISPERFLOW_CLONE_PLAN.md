@@ -117,9 +117,9 @@ System prompt to the Ollama model, roughly:
 
 ## 6. Open decisions
 
-1. **Target OS** — the injection + hotkey layer is the only OS-specific part.
-   Python (`pynput` + clipboard-paste) covers macOS/Windows/Linux for the MVP;
-   a native Swift app (à la VoiceInk/FreeFlow) is the long-term nicer macOS path.
+1. **Target OS** — ✅ decided: macOS (latest). MVP implemented in Python under
+   `whisperflow/` with `mlx-whisper` (Metal-accelerated on Apple Silicon);
+   a native Swift app (à la VoiceInk/FreeFlow) remains the long-term option.
 2. **English-only vs multilingual** — English-only unlocks faster models
    (distil-whisper, Parakeet); multilingual (e.g. French) means Whisper
    `small`/`large-v3-turbo`.

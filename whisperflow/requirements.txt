@@ -1,0 +1,8 @@
+numpy
+sounddevice
+requests
+pynput
+
+# STT backend — pick one:
+mlx-whisper           # Apple Silicon (Metal-accelerated, recommended)
+# faster-whisper      # Intel Macs / fallback (CPU, int8)
